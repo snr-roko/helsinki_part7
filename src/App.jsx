@@ -15,10 +15,29 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const localStorageCheck = window.localStorage.getItem('userLogin')
+    if (localStorageCheck) {
+      setUser(JSON.parse(localStorageCheck))
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
-    const loggedInUser = await loginService({username, password})
-    setUser(loggedInUser)
+    try { 
+      const loggedInUser = await loginService({username, password})
+      setUser(loggedInUser)
+      window.localStorage.setItem('userLogin', JSON.stringify(loggedInUser))
+    } catch (Exception) {
+      alert("Wrong Credentials")
+    }
+    setUsername('')
+    setPassword('')
+  }
+
+  const handleLogOut = async () => {
+    window.localStorage.clear()
+    setUser(null)
   }
 
   const loginForm = () => {
@@ -44,7 +63,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      {user !== null && <p>{`${user.name} logged in`}</p>}
+      {user !== null && <p>{`${user.name} logged in`} <button onClick={handleLogOut}>Log Out</button></p>}
       {user === null ? loginForm() : displayBlogs()}
     </div>
   )
