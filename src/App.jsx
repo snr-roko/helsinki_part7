@@ -7,6 +7,10 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+  const [likes, setLikes] = useState(0)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -60,11 +64,65 @@ const App = () => {
     )
   }
 
+  const handleBlogForm = async (event) => {
+    event.preventDefault()
+
+    const newData = {
+      title,
+      author,
+      url,
+      likes
+    }
+
+    const userStorage = window.localStorage.getItem('userLogin')
+    const tokenStorage = JSON.parse(userStorage).token
+
+    blogService.setToken(tokenStorage)
+    const createdBlog = await blogService.create(newData)
+    setBlogs([...blogs, createdBlog])
+    setTitle('')
+    setAuthor('')
+    setLikes(0)
+    setUrl('')
+  }
+
+  const blogForm = () => {
+    return (
+      <div>
+        <h3>Create New</h3>
+        <form onSubmit={handleBlogForm}>
+          <div>
+            <label htmlFor="title">Title:</label>
+            <input type='text' name='title' id='title' value={title} onChange={({target}) => setTitle(target.value)} />
+          </div>
+          <div>
+            <label htmlFor="author">Author:</label>
+            <input type='text' name='author' id='author' value={author} onChange={({target}) => setAuthor(target.value)} />
+          </div>
+          <div>
+            <label htmlFor="url">URL:</label>
+            <input type='url' name='url' id='url' value={url} onChange={({target}) => setUrl(target.value)} />
+          </div>
+          <div>
+            <label htmlFor="likes">Likes</label>
+            <input type='number' name='likes' id='likes' value={likes} onChange={({target}) => setLikes(target.value)} />
+          </div>
+          <button type='submit'>Create Blog</button>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <h2>blogs</h2>
-      {user !== null && <p>{`${user.name} logged in`} <button onClick={handleLogOut}>Log Out</button></p>}
-      {user === null ? loginForm() : displayBlogs()}
+      <div>
+        <h2>blogs</h2>
+        {user !== null && <p>{`${user.name} logged in`} <button onClick={handleLogOut}>Log Out</button></p>}
+      </div>
+      <div>
+        {user !== null && blogForm()}
+        {user === null ? loginForm() : displayBlogs()}
+      </div>
     </div>
   )
 }
