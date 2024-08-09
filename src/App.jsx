@@ -12,6 +12,8 @@ const App = () => {
   const [url, setUrl] = useState('')
   const [likes, setLikes] = useState(0)
   const [user, setUser] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successfulMessage, setSuccessfulMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -28,12 +30,24 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
+    if (!username || !password) {
+      setErrorMessage("Username and Password Required")
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setUsername('')
+      setPassword('')
+      return
+    } 
     try { 
       const loggedInUser = await loginService({username, password})
       setUser(loggedInUser)
       window.localStorage.setItem('userLogin', JSON.stringify(loggedInUser))
-    } catch (Exception) {
-      alert("Wrong Credentials")
+    } catch (error) {
+      setErrorMessage(error.error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
     setUsername('')
     setPassword('')
@@ -78,8 +92,19 @@ const App = () => {
     const tokenStorage = JSON.parse(userStorage).token
 
     blogService.setToken(tokenStorage)
-    const createdBlog = await blogService.create(newData)
-    setBlogs([...blogs, createdBlog])
+    try {
+      const createdBlog = await blogService.create(newData)
+      setBlogs([...blogs, createdBlog])
+      setSuccessfulMessage(`A new Blog ${createdBlog.title} by ${createdBlog.author}`)
+      setTimeout(() => {
+        setSuccessfulMessage(null)
+      }, 5000)
+    } catch (error) {
+      setErrorMessage(error.error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
     setTitle('')
     setAuthor('')
     setLikes(0)
@@ -117,6 +142,8 @@ const App = () => {
     <div>
       <div>
         <h2>blogs</h2>
+        {errorMessage}
+        {successfulMessage}
         {user !== null && <p>{`${user.name} logged in`} <button onClick={handleLogOut}>Log Out</button></p>}
       </div>
       <div>
