@@ -76,7 +76,7 @@ const App = () => {
 
   const displayBlogs = () => {
     return blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} user={user.name} />
+      <Blog key={blog.id} blog={blog} user={user.name} setBlogs={setBlogs} blogs={blogs} />
     )
   }
 
