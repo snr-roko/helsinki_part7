@@ -36,7 +36,7 @@ const handleLikesClick = async () => {
       {showAllInfo
         ? <div>
           <div>{blog.url}</div>
-          <div>{blog.likes} <button onClick={handleLikesClick}>likes</button></div>
+          <div>{blog.likes} <button onClick={handleLikesClick}>like</button></div>
           <div>{user}</div>
         </div>
         : null
