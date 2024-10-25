@@ -16,7 +16,7 @@ const toggleShowAllInfo = () => {
   setShowAllInfo(!showAllInfo)
 }
 
-const handleLikesClick = async () => {
+const handleLikeClick = async () => {
   const tokenStorage = window.localStorage.getItem('userLogin')
   const token = JSON.parse(tokenStorage).token
   blogService.setToken(token)
@@ -26,6 +26,39 @@ const handleLikesClick = async () => {
   setBlogs(updatedBlogs)
 }
 
+const handleRemoveClick = async () => {
+  const confirmResponse = window.confirm(`Remove ${blog.title} by ${blog.author}`)
+  if (confirmResponse) {
+    const tokenStorage = window.localStorage.getItem('userLogin')
+    const token = JSON.parse(tokenStorage).token
+    blogService.setToken(token)
+
+    try {
+      await blogService.deleteBlog(blog.id)
+      const updatedBlogs = blogs.filter(aBlog => aBlog.id !== blog.id)
+      setBlogs(updatedBlogs)
+  } catch(error) {
+    console.error(error)
+  }
+  }
+  
+}
+
+const getName = (blog) => {
+  try {
+    return blog.user.name
+  } catch(TypeError) {
+    return "Unknown User"
+  }
+}
+
+const getUsername = (blog) => {
+  try {
+    return blog.user.username
+  } catch(TypeError) {
+    return "Unknown Username"
+  }
+}
 
   return (
 
@@ -36,8 +69,15 @@ const handleLikesClick = async () => {
       {showAllInfo
         ? <div>
           <div>{blog.url}</div>
-          <div>{blog.likes} <button onClick={handleLikesClick}>like</button></div>
-          <div>{user}</div>
+          <div>{blog.likes} <button onClick={handleLikeClick}>like</button></div>
+          <div>{getName(blog)}</div>
+          <div>
+            {
+              user.username === getUsername(blog) 
+                ? <button onClick={handleRemoveClick} style={{color: "black", backgroundColor: "blue"}}>remove</button> 
+                : null
+            }
+          </div>
         </div>
         : null
         }

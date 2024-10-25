@@ -75,9 +75,10 @@ const App = () => {
   }
 
   const displayBlogs = () => {
+    console.log(user)
     const sortedBlogs = [...blogs].sort((blogOne, blogTwo) => blogTwo.likes - blogOne.likes)
     return sortedBlogs.map(blog =>
-      <Blog key={blog.id} blog={blog} user={user.name} setBlogs={setBlogs} blogs={blogs} />
+      <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs} />
     )
   }
 
