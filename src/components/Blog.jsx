@@ -60,12 +60,20 @@ const getUsername = (blog) => {
   }
 }
 
+const getLoggedInUser = () => {
+  if(user) {
+    return user.username
+  } else{
+    return "Unknown Username"
+  }
+}
+
   return (
 
     <div className='blogContainer' style={blogStyle}>
       <div>
         <span className='blogTitle'>{blog.title}</span>{" "}<span className='blogAuthor'>{blog.author}</span>{" "}
-        <button onClick={toggleShowAllInfo}>{showAllInfo ? 'Hide' : 'Show'}</button>
+        <button className='toggleView' onClick={toggleShowAllInfo}>{showAllInfo ? 'Hide' : 'Show'}</button>
       </div>
       {showAllInfo
         ? <div>
@@ -74,7 +82,7 @@ const getUsername = (blog) => {
           <div className='LoggedInUser'>{getName(blog)}</div>
           <div>
             {
-              user.username === getUsername(blog) 
+              getLoggedInUser() === getUsername(blog) 
                 ? <button onClick={handleRemoveClick} style={{color: "black", backgroundColor: "blue"}}>remove</button> 
                 : null
             }
