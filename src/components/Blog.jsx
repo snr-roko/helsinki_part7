@@ -62,15 +62,16 @@ const getUsername = (blog) => {
 
   return (
 
-    <div style={blogStyle}>
+    <div className='blogContainer' style={blogStyle}>
       <div>
-        {blog.title} {blog.author} <button onClick={toggleShowAllInfo}>{showAllInfo ? 'Hide' : 'Show'}</button>
+        <span className='blogTitle'>{blog.title}</span>{" "}<span className='blogAuthor'>{blog.author}</span>{" "}
+        <button onClick={toggleShowAllInfo}>{showAllInfo ? 'Hide' : 'Show'}</button>
       </div>
       {showAllInfo
         ? <div>
-          <div>{blog.url}</div>
-          <div>{blog.likes} <button onClick={handleLikeClick}>like</button></div>
-          <div>{getName(blog)}</div>
+          <div className='blogUrl'>{blog.url}</div>
+          <div className='blogLikes'>{blog.likes} <button onClick={handleLikeClick}>like</button></div>
+          <div className='LoggedInUser'>{getName(blog)}</div>
           <div>
             {
               user.username === getUsername(blog) 
