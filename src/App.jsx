@@ -58,6 +58,8 @@ const App = () => {
     window.localStorage.clear()
     setUser(null)
   }
+
+  
   
 
   const loginForm = () => {
@@ -84,6 +86,11 @@ const App = () => {
     setBlogs(updatedBlogs)
   }
 
+  const createBlogs = async (newData) => {
+    const newBlog = await blogService.create(newData)
+    return newBlog
+  }
+
   const displayBlogs = () => {
     const sortedBlogs = [...blogs].sort((blogOne, blogTwo) => blogTwo.likes - blogOne.likes)
     return sortedBlogs.map(blog =>
@@ -104,7 +111,7 @@ const App = () => {
         {user !== null
           && 
           <Togglable label='Click to add a new blog' ref={blogFormRef}>
-               <BlogForm blogFormRef={blogFormRef} blogs={blogs} setBlogs={setBlogs} setErrorMessage={setErrorMessage} setSuccessfulMessage={setSuccessfulMessage} />
+               <BlogForm newBlog={createBlogs} blogFormRef={blogFormRef} blogs={blogs} setBlogs={setBlogs} setErrorMessage={setErrorMessage} setSuccessfulMessage={setSuccessfulMessage} />
           </Togglable>
           }
         {user === null ? loginForm() : displayBlogs()}

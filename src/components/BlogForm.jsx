@@ -1,7 +1,7 @@
 import {useState, useRef} from 'react'
 import blogService from '../services/blogs'
 
-const BlogForm = ({blogFormRef, setErrorMessage, setSuccessfulMessage, setBlogs, blogs}) => {
+const BlogForm = ({newBlog, blogFormRef, setErrorMessage, setSuccessfulMessage, setBlogs, blogs}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -17,11 +17,11 @@ const BlogForm = ({blogFormRef, setErrorMessage, setSuccessfulMessage, setBlogs,
     }
 
     const userStorage = window.localStorage.getItem('userLogin')
-    const tokenStorage = JSON.parse(userStorage).token
+    const tokenStorage = userStorage ? JSON.parse(userStorage).token : null
 
     blogService.setToken(tokenStorage)
     try {
-      const createdBlog = await blogService.create(newData)
+      const createdBlog = await newBlog(newData)
       setBlogs([...blogs, createdBlog])
       setSuccessfulMessage(`A new Blog ${createdBlog.title} by ${createdBlog.author}`)
       blogFormRef.current.toggleVisibility()
@@ -46,21 +46,21 @@ const BlogForm = ({blogFormRef, setErrorMessage, setSuccessfulMessage, setBlogs,
         <form onSubmit={handleBlogForm}>
           <div>
             <label htmlFor="title">Title:</label>
-            <input type='text' name='title' id='title' value={title} onChange={({target}) => setTitle(target.value)} />
+            <input placeholder='Blog Title' type='text' name='title' id='title' value={title} onChange={({target}) => setTitle(target.value)} />
           </div>
           <div>
             <label htmlFor="author">Author:</label>
-            <input type='text' name='author' id='author' value={author} onChange={({target}) => setAuthor(target.value)} />
+            <input placeholder='Blog Author' type='text' name='author' id='author' value={author} onChange={({target}) => setAuthor(target.value)} />
           </div>
           <div>
             <label htmlFor="url">URL:</label>
-            <input type='url' name='url' id='url' value={url} onChange={({target}) => setUrl(target.value)} />
+            <input placeholder='Blog URL' type='url' name='url' id='url' value={url} onChange={({target}) => setUrl(target.value)} />
           </div>
           <div>
             <label htmlFor="likes">Likes</label>
-            <input type='number' name='likes' id='likes' value={likes} onChange={({target}) => setLikes(target.value)} />
+            <input placeholder='Blog Likes' type='number' name='likes' id='likes' value={likes} onChange={({target}) => setLikes(target.value)} />
           </div>
-          <button type='submit'>Create Blog</button>
+          <button className='newBlogSubmit' type='submit'>Create Blog</button>
         </form>
       </div>
     )

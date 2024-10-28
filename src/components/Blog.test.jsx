@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 import Blog from './Blog'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import BlogForm from './blogForm'
 
 test('render title and author by default alone', () => {
     const blog = {
@@ -76,4 +77,39 @@ test('like button handler being called when clicked on', async () => {
     await user.click(likeButton)
 
     expect(likehandler.mock.calls).toHaveLength(2)
+})
+
+test('rendering blog forms created', async () => {
+    const blog = {
+        title: "The Inevitable Death",
+        url: "http://www.death.com",
+        likes: 5000000004,
+        author: "Death"
+    }
+
+    const newBlogService = vi.fn()
+    const user = userEvent.setup()
+    const setErrorMessage = vi.fn()
+
+    const {container} = render(<BlogForm newBlog={newBlogService} setErrorMessage={setErrorMessage} />)
+
+    const blogTitle = screen.getByPlaceholderText('Blog Title')
+    const blogAuthor = screen.getByPlaceholderText('Blog Author')
+    const blogURL = screen.getByPlaceholderText('Blog URL')
+    const blogLikes = screen.getByPlaceholderText('Blog Likes')
+    
+    await user.type(blogTitle, blog.title)
+    await user.type(blogAuthor, blog.author)
+    await user.type(blogURL, blog.url)
+    await user.type(blogLikes, blog.likes.toString())
+
+    const submitButton = container.querySelector('.newBlogSubmit')
+    await user.click(submitButton)    
+    
+    expect(newBlogService.mock.calls).toHaveLength(1)
+    expect(newBlogService.mock.calls[0][0].title).toBe(blog.title)
+    expect(newBlogService.mock.calls[0][0].author).toBe(blog.author)
+    expect(newBlogService.mock.calls[0][0].url).toBe(blog.url)
+    expect(newBlogService.mock.calls[0][0].likes).toBe(blog.likes.toString())
+
 })
