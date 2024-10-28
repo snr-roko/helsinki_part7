@@ -73,13 +73,24 @@ const App = () => {
               <button type="submit">Login</button>
             </form>
   }
+  
+  const handleLikeClick = async (blog) => {
+    const tokenStorage = window.localStorage.getItem('userLogin')
+    const token = JSON.parse(tokenStorage).token
+    blogService.setToken(token)
+    const updateData = {...blog, likes: blog.likes + 1}
+    const response = await blogService.update(updateData, updateData.id)
+    const updatedBlogs = blogs.map(blog => blog.id === response.id ? response : blog)
+    setBlogs(updatedBlogs)
+  }
 
   const displayBlogs = () => {
     const sortedBlogs = [...blogs].sort((blogOne, blogTwo) => blogTwo.likes - blogOne.likes)
     return sortedBlogs.map(blog =>
-      <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs} />
+      <Blog key={blog.id} blog={blog} user={user} setBlogs={setBlogs} blogs={blogs} handleLikeClick={handleLikeClick} />
     )
   }
+
 
   return (
     <div>

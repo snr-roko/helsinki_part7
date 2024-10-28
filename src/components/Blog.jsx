@@ -1,7 +1,7 @@
 import blogService from '../services/blogs'
 
 import {useState} from 'react'
-const Blog = ({ blog, user, setBlogs, blogs }) => {
+const Blog = ({ blog, user, setBlogs, blogs, handleLikeClick }) => {
 const [showAllInfo, setShowAllInfo] = useState(false)
 
   const blogStyle = {
@@ -14,16 +14,6 @@ const [showAllInfo, setShowAllInfo] = useState(false)
 
 const toggleShowAllInfo = () => {
   setShowAllInfo(!showAllInfo)
-}
-
-const handleLikeClick = async () => {
-  const tokenStorage = window.localStorage.getItem('userLogin')
-  const token = JSON.parse(tokenStorage).token
-  blogService.setToken(token)
-  const updateData = {...blog, likes: blog.likes + 1}
-  const response = await blogService.update(updateData, updateData.id)
-  const updatedBlogs = blogs.map(blog => blog.id === response.id ? response : blog)
-  setBlogs(updatedBlogs)
 }
 
 const handleRemoveClick = async () => {
@@ -78,7 +68,7 @@ const getLoggedInUser = () => {
       {showAllInfo
         ? <div>
           <div className='blogUrl'>{blog.url}</div>
-          <div className='blogLikes'>{blog.likes} <button onClick={handleLikeClick}>like</button></div>
+          <div className='blogLikes'>{blog.likes} <button className='blogLikeButton' onClick={() => handleLikeClick(blog)}>like</button></div>
           <div className='LoggedInUser'>{getName(blog)}</div>
           <div>
             {
