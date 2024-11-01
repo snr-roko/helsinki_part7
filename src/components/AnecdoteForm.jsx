@@ -5,7 +5,7 @@ export const CreateNew = (props) => {
     const content = useField('text')
     const author = useField('text')
     const info = useField('text')
-
+    
     const navigate = useNavigate()
 
     const handleSubmit = (e) => {
@@ -22,6 +22,16 @@ export const CreateNew = (props) => {
         props.setNotification("")
       }, 5000)
     }
+
+    const handleReset = () => {
+      content.reset()
+      author.reset()
+      info.reset()
+    }
+
+    const spreadContent = {type: content.type, value: content.value, onChange: content.onChange}
+    const spreadAuthor = {type: author.type, value: author.value, onChange: author.onChange}
+    const spreadInfo = {type: info.type, value: info.value, onChange: info.onChange}
   
     return (
       <div>
@@ -29,17 +39,18 @@ export const CreateNew = (props) => {
         <form onSubmit={handleSubmit}>
           <div>
             content
-            <input {...content} />
+            <input {...spreadContent} />
           </div>
           <div>
             author
-            <input {...author} />
+            <input {...spreadAuthor} />
           </div>
           <div>
             url for more info
-            <input {...info} />
+            <input {...spreadInfo} />
           </div>
-          <button>create</button>
+          <button type="submit">create</button>{" "}
+          <button type="button" onClick={handleReset}>reset</button>
         </form>
       </div>
     )
