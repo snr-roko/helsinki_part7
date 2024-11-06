@@ -1,30 +1,30 @@
-import {useState, forwardRef, useImperativeHandle} from 'react'
+import { useState, forwardRef, useImperativeHandle } from "react";
 const Togglable = forwardRef((props, ref) => {
-    const {label, children} = props
-    const [visible, setVisible] = useState(false)
-    const showClass = {
-        display: visible ? '' : 'none'
-    }
-    const hideClass = {
-        display: visible ? 'none' : ''
-    }
+  const { label, children } = props;
+  const [visible, setVisible] = useState(false);
+  const showClass = {
+    display: visible ? "" : "none",
+  };
+  const hideClass = {
+    display: visible ? "none" : "",
+  };
 
-    const toggleVisibility = () => {
-        setVisible(!visible)
-    }
+  const toggleVisibility = () => {
+    setVisible(!visible);
+  };
 
-    useImperativeHandle(ref, () => ({toggleVisibility}))
+  useImperativeHandle(ref, () => ({ toggleVisibility }));
 
-    return (
-        <div>
-            <div style={hideClass}>
-                <button className='new-blog' onClick={toggleVisibility}>{label}</button>
-            </div>
-            <div style={showClass}>
-                {children}
-            </div>
-        </div>
-    )
-})
+  return (
+    <div>
+      <div style={hideClass}>
+        <button className="new-blog" onClick={toggleVisibility}>
+          {label}
+        </button>
+      </div>
+      <div style={showClass}>{children}</div>
+    </div>
+  );
+});
 
-export default Togglable
+export default Togglable;
