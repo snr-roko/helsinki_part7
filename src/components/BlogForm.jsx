@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
-import blogService from "../services/blogs";
 import { useDispatch } from "react-redux";
+import { createBlog } from "../reducers/blogReducer";
+
 const BlogForm = ({
   newBlog,
   blogFormRef,
-  setBlogs,
-  blogs,
 }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -23,13 +22,8 @@ const BlogForm = ({
       likes,
     };
 
-    const userStorage = window.localStorage.getItem("userLogin");
-    const tokenStorage = userStorage ? JSON.parse(userStorage).token : null;
-
-    blogService.setToken(tokenStorage);
     try {
-      const createdBlog = await newBlog(newData);
-      setBlogs([...blogs, createdBlog]);
+      dispatch(createBlog(newData))
       dispatch({
         type: 'notifications/createNotification',
         payload: {

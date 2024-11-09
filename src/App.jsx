@@ -4,12 +4,11 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/blogForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
 
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -17,9 +16,10 @@ const App = () => {
   const dispatch = useDispatch()
   const blogFormRef = useRef();
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  const blogs = useSelector(state => {
+    if (!state.blogs) return null
+    else return state.blogs
+  })
 
   useEffect(() => {
     const localStorageCheck = window.localStorage.getItem("userLogin");
@@ -116,7 +116,7 @@ const App = () => {
     const updatedBlogs = blogs.map((blog) =>
       blog.id === response.id ? response : blog,
     );
-    setBlogs(updatedBlogs);
+    // setBlogs(updatedBlogs);
   };
 
   const createBlogs = async (newData) => {
@@ -133,7 +133,6 @@ const App = () => {
         key={blog.id}
         blog={blog}
         user={user}
-        setBlogs={setBlogs}
         blogs={blogs}
         handleLikeClick={handleLikeClick}
       />
@@ -159,7 +158,6 @@ const App = () => {
               newBlog={createBlogs}
               blogFormRef={blogFormRef}
               blogs={blogs}
-              setBlogs={setBlogs}
             />
           </Togglable>
         )}

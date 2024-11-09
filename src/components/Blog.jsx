@@ -1,6 +1,6 @@
 import blogService from "../services/blogs";
-
 import { useState } from "react";
+
 const Blog = ({ blog, user, setBlogs, blogs, handleLikeClick }) => {
   const [showAllInfo, setShowAllInfo] = useState(false);
 
