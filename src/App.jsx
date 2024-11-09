@@ -4,15 +4,17 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/blogForm";
+import { useDispatch } from "react-redux";
+import Notification from './components/Notification'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successfulMessage, setSuccessfulMessage] = useState(null);
 
+  const dispatch = useDispatch()
   const blogFormRef = useRef();
 
   useEffect(() => {
@@ -29,9 +31,19 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     if (!username || !password) {
-      setErrorMessage("Username and Password Required");
+      dispatch({type: 'notifications/createNotification',
+        payload: {
+            display: "Username and Password Required",
+            type: 'ERROR'
+        }
+     });
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({
+          type: 'notifications/createNotification',
+          payload: {
+            type: 'RESET'
+          }
+        })
       }, 5000);
       setUsername("");
       setPassword("");
@@ -42,9 +54,20 @@ const App = () => {
       setUser(loggedInUser);
       window.localStorage.setItem("userLogin", JSON.stringify(loggedInUser));
     } catch (error) {
-      setErrorMessage(error.error);
+      dispatch({
+        type: 'notifications/createNotification',
+        payload: {
+          display: error.error,
+          type: 'ERROR'
+        }
+      });
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({
+          type: 'notifications/createNotification',
+          payload: {
+            type: 'RESET'
+          }
+        })
       }, 5000);
     }
     setUsername("");
@@ -121,8 +144,7 @@ const App = () => {
     <div>
       <div>
         <h2>blogs</h2>
-        {errorMessage}
-        {successfulMessage}
+        <Notification />
         {user !== null && (
           <p>
             {`${user.name} logged in`}{" "}
@@ -138,8 +160,6 @@ const App = () => {
               blogFormRef={blogFormRef}
               blogs={blogs}
               setBlogs={setBlogs}
-              setErrorMessage={setErrorMessage}
-              setSuccessfulMessage={setSuccessfulMessage}
             />
           </Togglable>
         )}

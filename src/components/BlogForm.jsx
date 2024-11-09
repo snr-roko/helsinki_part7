@@ -1,11 +1,9 @@
 import { useState, useRef } from "react";
 import blogService from "../services/blogs";
-
+import { useDispatch } from "react-redux";
 const BlogForm = ({
   newBlog,
   blogFormRef,
-  setErrorMessage,
-  setSuccessfulMessage,
   setBlogs,
   blogs,
 }) => {
@@ -13,6 +11,8 @@ const BlogForm = ({
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [likes, setLikes] = useState(0);
+
+  const dispatch = useDispatch()
 
   const handleBlogForm = async (event) => {
     event.preventDefault();
@@ -30,17 +30,37 @@ const BlogForm = ({
     try {
       const createdBlog = await newBlog(newData);
       setBlogs([...blogs, createdBlog]);
-      setSuccessfulMessage(
-        `A new Blog ${createdBlog.title} by ${createdBlog.author}`,
-      );
+      dispatch({
+        type: 'notifications/createNotification',
+        payload: {
+          display: `A new Blog ${createdBlog.title} by ${createdBlog.author}`,
+          type: 'SUCCESS'
+        }
+      }) 
       blogFormRef.current.toggleVisibility();
       setTimeout(() => {
-        setSuccessfulMessage(null);
+        dispatch({
+          type: 'notifications/createNotification',
+          payload: {
+            type:  'RESET'
+          }
+        })
       }, 5000);
     } catch (error) {
-      setErrorMessage(error.error);
+      dispatch({
+        type: 'notifications/createNotification',
+        payload: {
+          display: error.error, 
+          type: 'ERROR'
+        }
+      })
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({
+          type: 'notifications/createNotification',
+          payload: {
+            type: 'RESET'
+          }
+        })
       }, 5000);
     }
     setTitle("");
