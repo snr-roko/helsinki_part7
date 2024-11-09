@@ -1,8 +1,10 @@
-import blogService from "../services/blogs";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, user, setBlogs, blogs, handleLikeClick }) => {
+const Blog = ({ blog, user, handleLikeClick }) => {
   const [showAllInfo, setShowAllInfo] = useState(false);
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -21,16 +23,16 @@ const Blog = ({ blog, user, setBlogs, blogs, handleLikeClick }) => {
       `Remove ${blog.title} by ${blog.author}`,
     );
     if (confirmResponse) {
-      const tokenStorage = window.localStorage.getItem("userLogin");
-      const token = JSON.parse(tokenStorage).token;
-      blogService.setToken(token);
-
       try {
-        await blogService.deleteBlog(blog.id);
-        const updatedBlogs = blogs.filter((aBlog) => aBlog.id !== blog.id);
-        setBlogs(updatedBlogs);
+        dispatch(deleteBlog(blog))
       } catch (error) {
-        console.error(error);
+        dispatch({
+          type: 'notifications/createNotification',
+          payload: {
+            display: error.error,
+            type: 'ERROR'
+          }
+        })
       }
     }
   };

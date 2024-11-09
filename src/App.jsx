@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/blogForm";
 import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
+import { likeBlog } from "./reducers/blogReducer";
 
 
 const App = () => {
@@ -108,21 +108,25 @@ const App = () => {
   };
 
   const handleLikeClick = async (blog) => {
-    const tokenStorage = window.localStorage.getItem("userLogin");
-    const token = JSON.parse(tokenStorage).token;
-    blogService.setToken(token);
     const updateData = { ...blog, likes: blog.likes + 1 };
-    const response = await blogService.update(updateData, updateData.id);
-    const updatedBlogs = blogs.map((blog) =>
-      blog.id === response.id ? response : blog,
-    );
-    // setBlogs(updatedBlogs);
+    dispatch(likeBlog(updateData))
+    dispatch({
+      type: 'notifications/createNotification',
+      payload: {
+        display: `blog ${blog.title} by ${blog.author} liked`,
+        type: 'SUCCESS'
+      }
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'notifications/createNotification',
+        payload: {
+          type: 'RESET'
+        }
+      })
+    }, 5000)
   };
 
-  const createBlogs = async (newData) => {
-    const newBlog = await blogService.create(newData);
-    return newBlog;
-  };
 
   const displayBlogs = () => {
     const sortedBlogs = [...blogs].sort(
@@ -155,7 +159,6 @@ const App = () => {
         {user !== null && (
           <Togglable label="Click to add a new blog" ref={blogFormRef}>
             <BlogForm
-              newBlog={createBlogs}
               blogFormRef={blogFormRef}
               blogs={blogs}
             />

@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { createBlog } from "../reducers/blogReducer";
 
 const BlogForm = ({
-  newBlog,
   blogFormRef,
 }) => {
   const [title, setTitle] = useState("");
