@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
 import { likeBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useMatch } from "react-router-dom";
 import Users from "./components/Users";
+import User from './components/User'
 
 
 const App = () => {
@@ -24,11 +25,14 @@ const App = () => {
   })
 
   const user = useSelector(state => state.user)
-
   
   const users = useSelector(state => state.users)
-  console.log(users)
+  
+  const match = useMatch('/users/:id')
+  let blogUser
 
+  if (match) {blogUser = users.find(user => user.id === match.params.id)}
+  
   const handleLogin = (event) => {
     event.preventDefault();
     if (!username || !password) {
@@ -142,7 +146,6 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
       <div>
         <div>
           <h2>blogs</h2>
@@ -171,10 +174,11 @@ const App = () => {
           <Route path="/users" element={
             user ? <Users users={users} /> : <Navigate replace to="/" />
           }/>
+          <Route path="/users/:id" element={
+            user ? <User user={blogUser} /> : <Navigate replace to="/" />
+          } />
         </Routes>
-        
       </div>
-    </BrowserRouter>
   );
 };
 

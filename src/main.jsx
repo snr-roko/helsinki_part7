@@ -7,6 +7,7 @@ import blogReducer from './reducers/blogReducer'
 import { initialBlogsSetting } from "./reducers/blogReducer";
 import userReducer, {setLoggedInUser} from './reducers/userReducer'
 import usersReducer, {initializeUsers} from './reducers/usersReducer'
+import { BrowserRouter } from "react-router-dom";
 
 const store = configureStore({
     reducer: {
@@ -24,6 +25,8 @@ store.dispatch(initializeUsers())
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
-        <App />
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
     </Provider>
 );
