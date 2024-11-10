@@ -3,21 +3,12 @@ import { useDispatch } from "react-redux";
 import { deleteBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog, user, handleLikeClick }) => {
-  const [showAllInfo, setShowAllInfo] = useState(false);
+  if (!blog) {
+    return null
+  }
+
   const dispatch = useDispatch()
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
-  const toggleShowAllInfo = () => {
-    setShowAllInfo(!showAllInfo);
-  };
-
+  
   const handleRemoveClick = async () => {
     const confirmResponse = window.confirm(
       `Remove ${blog.title} by ${blog.author}`,
@@ -62,39 +53,36 @@ const Blog = ({ blog, user, handleLikeClick }) => {
   };
 
   return (
-    <div className="blogContainer" style={blogStyle}>
+    <div className="blogContainer">
       <div>
-        <span className="blogTitle">{blog.title}</span>{" "}
-        <span className="blogAuthor">{blog.author}</span>{" "}
-        <button className="toggleView" onClick={toggleShowAllInfo}>
-          {showAllInfo ? "Hide" : "Show"}
-        </button>
+        <h3>
+          <span className="blogTitle">{blog.title}</span>{" "}
+          <span className="blogAuthor">{blog.author}</span>{" "}
+        </h3>
       </div>
-      {showAllInfo ? (
-        <div>
-          <div className="blogUrl">{blog.url}</div>
-          <div className="blogLikes">
-            {blog.likes}{" "}
-            <button
-              className="blogLikeButton"
-              onClick={() => handleLikeClick(blog)}
-            >
-              like
-            </button>
-          </div>
-          <div className="LoggedInUser">{getName(blog)}</div>
-          <div>
-            {getLoggedInUser() === getUsername(blog) ? (
-              <button
-                onClick={handleRemoveClick}
-                style={{ color: "black", backgroundColor: "blue" }}
-              >
-                remove
-              </button>
-            ) : null}
-          </div>
+      <div>
+        <div className="blogUrl">{blog.url}</div>
+        <div className="blogLikes">
+          {blog.likes}{" "}
+          <button
+            className="blogLikeButton"
+            onClick={() => handleLikeClick(blog)}
+          >
+            like
+          </button>
         </div>
-      ) : null}
+        <div className="LoggedInUser">{`Added by ${getName(blog)}`}</div>
+        <div>
+          {getLoggedInUser() === getUsername(blog) ? (
+            <button
+              onClick={handleRemoveClick}
+              style={{ color: "black", backgroundColor: "blue" }}
+            >
+              remove
+            </button>
+          ) : null}
+        </div>
+        </div>
     </div>
   );
 };

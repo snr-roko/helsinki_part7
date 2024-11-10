@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
 import { likeBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
-import { Routes, Route, Navigate, useMatch } from "react-router-dom";
+import { Routes, Route, Navigate, useMatch, Link } from "react-router-dom";
 import Users from "./components/Users";
 import User from './components/User'
 
@@ -19,10 +19,11 @@ const App = () => {
   const dispatch = useDispatch()
   const blogFormRef = useRef();
 
-  const blogs = useSelector(state => {
-    if (!state.blogs) return null
-    else return state.blogs
-  })
+  const blogs = useSelector(state => state.blogs)
+
+  const blogMatch = useMatch('/blogs/:id')
+  let blog
+  if (blogMatch) {blog = blogs.find(eachBlog => eachBlog.id === blogMatch.params.id)}
 
   const user = useSelector(state => state.user)
   
@@ -134,14 +135,17 @@ const App = () => {
     const sortedBlogs = [...blogs].sort(
       (blogOne, blogTwo) => blogTwo.likes - blogOne.likes,
     );
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: "solid",
+      borderWidth: 1,
+      marginBottom: 5,
+    }
     return sortedBlogs.map((blog) => (
-      <Blog
-        key={blog.id}
-        blog={blog}
-        user={user}
-        blogs={blogs}
-        handleLikeClick={handleLikeClick}
-      />
+      <div key={blog.id} style={blogStyle}>
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+      </div>
     ));
   };
 
@@ -171,6 +175,15 @@ const App = () => {
             {user === null ? loginForm() : displayBlogs()}
           </div>
           }/>
+          <Route path="/blogs/:id" element={ 
+            user ?  <Blog
+                      blog={blog}
+                      user={user}
+                      blogs={blogs}
+                      handleLikeClick={handleLikeClick}
+                    />
+                    : <Navigate replace to="/" />
+          } />
           <Route path="/users" element={
             user ? <Users users={users} /> : <Navigate replace to="/" />
           }/>
