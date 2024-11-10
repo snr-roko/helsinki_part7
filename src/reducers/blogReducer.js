@@ -51,6 +51,16 @@ export const likeBlog = (blog) => {
     }
 }
 
+export const addBlogComment = (blog, comment) => {
+    return async dispatch => {
+        const tokenStorage = window.localStorage.getItem("loggedInUser");
+        const token = JSON.parse(tokenStorage).token;
+        blogService.setToken(token);
+        const updatedBlog = await blogService.addComment(blog.id, comment)
+        dispatch(updateBlog(updatedBlog))
+    }
+}
+
 export const deleteBlog = (blog) => {
     return async dispatch => {
         const tokenStorage = window.localStorage.getItem("loggedInUser");
