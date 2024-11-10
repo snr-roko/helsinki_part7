@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
 import { likeBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Users from "./components/Users";
 
 
 const App = () => {
@@ -22,7 +24,10 @@ const App = () => {
   })
 
   const user = useSelector(state => state.user)
-  console.log(user)
+
+  
+  const users = useSelector(state => state.users)
+  console.log(users)
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -137,29 +142,39 @@ const App = () => {
   };
 
   return (
-    <div>
+    <BrowserRouter>
       <div>
-        <h2>blogs</h2>
-        <Notification />
-        {user !== null && (
-          <p>
-            {`${user.name} logged in`}{" "}
-            <button onClick={handleLogOut}>Log Out</button>
-          </p>
-        )}
+        <div>
+          <h2>blogs</h2>
+          <Notification />
+          {user !== null && (
+            <p>
+              {`${user.name} logged in`}{" "}
+              <button onClick={handleLogOut}>Log Out</button>
+            </p>
+          )}
+        </div>
+        <Routes>
+          <Route path="/" element={
+            <div>
+            {user !== null && (
+              <Togglable label="Click to add a new blog" ref={blogFormRef}>
+                <BlogForm
+                  blogFormRef={blogFormRef}
+                  blogs={blogs}
+                />
+              </Togglable>
+            )}
+            {user === null ? loginForm() : displayBlogs()}
+          </div>
+          }/>
+          <Route path="/users" element={
+            user ? <Users users={users} /> : <Navigate replace to="/" />
+          }/>
+        </Routes>
+        
       </div>
-      <div>
-        {user !== null && (
-          <Togglable label="Click to add a new blog" ref={blogFormRef}>
-            <BlogForm
-              blogFormRef={blogFormRef}
-              blogs={blogs}
-            />
-          </Togglable>
-        )}
-        {user === null ? loginForm() : displayBlogs()}
-      </div>
-    </div>
+    </BrowserRouter>
   );
 };
 
