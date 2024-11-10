@@ -31,7 +31,7 @@ export const initialBlogsSetting = () => {
 
 export const createBlog = (newBlog) => {
     return async dispatch => {
-        const userStorage = window.localStorage.getItem("userLogin");
+        const userStorage = window.localStorage.getItem("loggedInUser");
         const tokenStorage = userStorage ? JSON.parse(userStorage).token : null;
     
         blogService.setToken(tokenStorage);
@@ -43,7 +43,7 @@ export const createBlog = (newBlog) => {
 
 export const likeBlog = (blog) => {
     return async dispatch => {
-        const tokenStorage = window.localStorage.getItem("userLogin");
+        const tokenStorage = window.localStorage.getItem("loggedInUser");
         const token = JSON.parse(tokenStorage).token;
         blogService.setToken(token);
         const updatedBlog = await blogService.update(blog, blog.id)
@@ -53,7 +53,7 @@ export const likeBlog = (blog) => {
 
 export const deleteBlog = (blog) => {
     return async dispatch => {
-        const tokenStorage = window.localStorage.getItem("userLogin");
+        const tokenStorage = window.localStorage.getItem("loggedInUser");
         const token = JSON.parse(tokenStorage).token;
         blogService.setToken(token);
   

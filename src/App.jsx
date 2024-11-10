@@ -6,12 +6,12 @@ import BlogForm from "./components/blogForm";
 import { useDispatch, useSelector } from "react-redux";
 import Notification from './components/Notification'
 import { likeBlog } from "./reducers/blogReducer";
+import { loginUser, logoutUser } from "./reducers/userReducer";
 
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   const dispatch = useDispatch()
   const blogFormRef = useRef();
@@ -21,14 +21,10 @@ const App = () => {
     else return state.blogs
   })
 
-  useEffect(() => {
-    const localStorageCheck = window.localStorage.getItem("userLogin");
-    if (localStorageCheck) {
-      setUser(JSON.parse(localStorageCheck));
-    }
-  }, []);
+  const user = useSelector(state => state.user)
+  console.log(user)
 
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
     if (!username || !password) {
       dispatch({type: 'notifications/createNotification',
@@ -50,9 +46,7 @@ const App = () => {
       return;
     }
     try {
-      const loggedInUser = await loginService({ username, password });
-      setUser(loggedInUser);
-      window.localStorage.setItem("userLogin", JSON.stringify(loggedInUser));
+      dispatch(loginUser({username, password}))
     } catch (error) {
       dispatch({
         type: 'notifications/createNotification',
@@ -74,9 +68,8 @@ const App = () => {
     setPassword("");
   };
 
-  const handleLogOut = async () => {
-    window.localStorage.clear();
-    setUser(null);
+  const handleLogOut = () => {
+    dispatch(logoutUser())
   };
 
   const loginForm = () => {
