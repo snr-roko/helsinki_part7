@@ -151,15 +151,17 @@ const App = () => {
 
   return (
       <div>
-        <div>
-          <h2>blogs</h2>
-          <Notification />
-          {user !== null && (
-            <p>
+        {user !== null && (
+            <div style={{backgroundColor: "#e2e8f0"}}>
+              <Link to="/">Blogs</Link>{" "}
+              <Link to="/users">Users</Link>{" "}
               {`${user.name} logged in`}{" "}
               <button onClick={handleLogOut}>Log Out</button>
-            </p>
-          )}
+            </div>
+        )}
+        <div>
+          <h2>Blog App</h2>
+          <Notification />
         </div>
         <Routes>
           <Route path="/" element={
