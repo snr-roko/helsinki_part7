@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteBlog } from "../reducers/blogReducer";
 
@@ -81,6 +80,15 @@ const Blog = ({ blog, user, handleLikeClick }) => {
               remove
             </button>
           ) : null}
+        </div>
+        <div>
+          <h3>Comments</h3>
+          {blog.comments 
+            ? blog.comments.map(comment => (
+              <li style={{marginLeft: 30}} key={comment}>{comment}</li>
+          )
+          )
+        : null}
         </div>
         </div>
     </div>
