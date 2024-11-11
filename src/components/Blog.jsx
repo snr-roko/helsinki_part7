@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteBlog, addBlogComment } from "../reducers/blogReducer";
+import { Button, List, TextField } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 
 const Blog = ({ blog, user, handleLikeClick }) => {
   if (!blog) {
@@ -16,17 +18,7 @@ const Blog = ({ blog, user, handleLikeClick }) => {
       `Remove ${blog.title} by ${blog.author}`,
     );
     if (confirmResponse) {
-      try {
-        dispatch(deleteBlog(blog))
-      } catch (error) {
-        dispatch({
-          type: 'notifications/createNotification',
-          payload: {
-            display: error.error,
-            type: 'ERROR'
-          }
-        })
-      }
+      dispatch(deleteBlog(blog))
     }
   };
 
@@ -55,40 +47,7 @@ const Blog = ({ blog, user, handleLikeClick }) => {
   };
 
   const handleAddComment = () => {
-    try {
       dispatch(addBlogComment(blog, {comment}))
-      dispatch({
-        type: "notifications/createNotification",
-        payload: {
-          type: 'SUCCESS',
-          display: `Comment Added to ${blog.title}`
-        }
-      })
-      setTimeout(() => {
-        dispatch({
-          type: "notifications/createNotification",
-          payload: {
-            type: 'RESET'
-          }
-        })
-      }, 5000)
-  } catch(error) {
-    dispatch({
-      type: "notifications/createNotification",
-      payload: {
-        type: 'ERROR',
-        display: error.error
-      }
-    })
-    setTimeout(() => {
-      dispatch({
-        type: "notifications/createNotification",
-        payload: {
-          type: 'RESET'
-        }
-      })
-    }, 5000)
-  }
 } 
 
   return (
@@ -96,42 +55,49 @@ const Blog = ({ blog, user, handleLikeClick }) => {
       <div>
         <h3>
           <span className="blogTitle">{blog.title}</span>{" "}
-          <span className="blogAuthor">{blog.author}</span>{" "}
+          <span style={{color: "coral"}} className="blogAuthor">{blog.author}</span>{" "}
         </h3>
       </div>
       <div>
-        <div className="blogUrl">{blog.url}</div>
-        <div className="blogLikes">
-          {blog.likes}{" "}
-          <button
+        <div className="blogUrl"><a href={blog.url}>{blog.url}</a></div>
+        <div style={{marginTop: 30, marginBottom: 30}} className="blogLikes">
+          {blog.likes}
+          <Button
+            style={{marginLeft: 20}}
+            color="secondary"
+            variant="contained"
             className="blogLikeButton"
             onClick={() => handleLikeClick(blog)}
           >
             like
-          </button>
+          </Button>
         </div>
-        <div className="LoggedInUser">{`Added by ${getName(blog)}`}</div>
+        <div style={{marginBottom: 20}} className="LoggedInUser">{`Added by ${getName(blog)}`}</div>
         <div>
           {getLoggedInUser() === getUsername(blog) ? (
-            <button
+            <Button
               onClick={handleRemoveClick}
-              style={{ color: "black", backgroundColor: "blue" }}
+              color="secondary"
+              variant="contained"
+              startIcon={<Delete />}
             >
               remove
-            </button>
+            </Button>
           ) : null}
         </div>
         <div>
           <h3>Comments</h3>
           <div style={{marginBottom: 30}}>
             <form onSubmit={handleAddComment}>
-            <input type="text" value={comment} onChange={({target}) => setComment(target.value)}/>
-            <button type="submit">Add Comment</button>
+            <div style={{marginBottom: 15}}>
+              <TextField label="comment" value={comment} onChange={({target}) => setComment(target.value)}/>
+            </div>
+            <Button color="secondary" type="submit">Add Comment</Button>
             </form>
           </div>
           {blog.comments 
             ? blog.comments.map(comment => (
-              <li style={{marginLeft: 30}} key={comment}>{comment}</li>
+              <List style={{marginLeft: 30}} key={comment}>{comment}</List>
           )
           )
         : null}

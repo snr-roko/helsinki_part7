@@ -36,8 +36,41 @@ export const createBlog = (newBlog) => {
     
         blogService.setToken(tokenStorage);
     
-        const blogToAdd = await blogService.create(newBlog)
-        dispatch(addBlog(blogToAdd))
+        try {
+            const blogToAdd = await blogService.create(newBlog)
+            dispatch(addBlog(blogToAdd))
+            dispatch({
+                type: 'notifications/createNotification',
+                payload: {
+                  display: `A new Blog ${blogToAdd.title} by ${blogToAdd.author}`,
+                  type: 'SUCCESS'
+                }
+              })
+              setTimeout(() => {
+                dispatch({
+                  type: 'notifications/createNotification',
+                  payload: {
+                    type:  'RESET'
+                  }
+                })
+              }, 5000);
+            } catch (error) {
+              dispatch({
+                type: 'notifications/createNotification',
+                payload: {
+                  display: error.error, 
+                  type: 'ERROR'
+                }
+              })
+              setTimeout(() => {
+                dispatch({
+                  type: 'notifications/createNotification',
+                  payload: {
+                    type: 'RESET'
+                  }
+                })
+              }, 5000);
+            } 
     }
 }
 
@@ -56,8 +89,41 @@ export const addBlogComment = (blog, comment) => {
         const tokenStorage = window.localStorage.getItem("loggedInUser");
         const token = JSON.parse(tokenStorage).token;
         blogService.setToken(token);
-        const updatedBlog = await blogService.addComment(blog.id, comment)
-        dispatch(updateBlog(updatedBlog))
+        try {
+            const updatedBlog = await blogService.addComment(blog.id, comment)
+            dispatch(updateBlog(updatedBlog))
+            dispatch({
+                type: "notifications/createNotification",
+                payload: {
+                  type: 'SUCCESS',
+                  display: `Comment Added to ${blog.title}`
+                }
+              })
+              setTimeout(() => {
+                dispatch({
+                  type: "notifications/createNotification",
+                  payload: {
+                    type: 'RESET'
+                  }
+                })
+              }, 5000)
+          } catch(error) {
+            dispatch({
+              type: "notifications/createNotification",
+              payload: {
+                type: 'ERROR',
+                display: error.error
+              }
+            })
+            setTimeout(() => {
+              dispatch({
+                type: "notifications/createNotification",
+                payload: {
+                  type: 'RESET'
+                }
+              })
+            }, 5000)
+          }
     }
 }
 
@@ -67,8 +133,41 @@ export const deleteBlog = (blog) => {
         const token = JSON.parse(tokenStorage).token;
         blogService.setToken(token);
   
-        await blogService.deleteBlog(blog.id)
-        dispatch(removeBlog(blog))
+        try {
+            await blogService.deleteBlog(blog.id)
+            dispatch(removeBlog(blog))
+            dispatch({
+                type: "notifications/createNotification",
+                payload: {
+                    display: `${blog.title} deleted successfully`,
+                    type: 'SUCCESS'
+                }
+            })
+            setTimeout(() => {
+                dispatch({
+                type: "notifications/createNotification",
+                payload: {
+                    type: 'RESET'
+                }
+            })
+        }, 5000)
+        } catch (error) {
+            dispatch({
+              type: 'notifications/createNotification',
+              payload: {
+                display: error.error,
+                type: 'ERROR'
+              }
+            })
+            setTimeout(() => {
+                dispatch({
+                type: "notifications/createNotification",
+                payload: {
+                    type: 'RESET'
+                }
+            })
+        }, 5000)
+}
     }
 }
 

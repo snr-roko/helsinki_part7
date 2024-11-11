@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { createBlog } from "../reducers/blogReducer";
+import { Button, TextField } from "@mui/material";
+import { Save } from "@mui/icons-material";
 
 const BlogForm = ({
   blogFormRef,
@@ -20,99 +22,59 @@ const BlogForm = ({
       url,
       likes,
     };
-
-    try {
       dispatch(createBlog(newData))
-      dispatch({
-        type: 'notifications/createNotification',
-        payload: {
-          display: `A new Blog ${createdBlog.title} by ${createdBlog.author}`,
-          type: 'SUCCESS'
-        }
-      }) 
-      blogFormRef.current.toggleVisibility();
-      setTimeout(() => {
-        dispatch({
-          type: 'notifications/createNotification',
-          payload: {
-            type:  'RESET'
-          }
-        })
-      }, 5000);
-    } catch (error) {
-      dispatch({
-        type: 'notifications/createNotification',
-        payload: {
-          display: error.error, 
-          type: 'ERROR'
-        }
-      })
-      setTimeout(() => {
-        dispatch({
-          type: 'notifications/createNotification',
-          payload: {
-            type: 'RESET'
-          }
-        })
-      }, 5000);
-    }
-    setTitle("");
-    setAuthor("");
-    setLikes(0);
-    setUrl("");
-  };
+      blogFormRef.current.toggleVisibility();      
+      setTitle("");
+      setAuthor("");
+      setLikes(0);
+      setUrl("");
+  }
 
   return (
     <div>
       <h3>Create New</h3>
-      <form onSubmit={handleBlogForm}>
+      <form style={{display: "flex", flexDirection: "column", gap: 15}} onSubmit={handleBlogForm}>
         <div>
-          <label htmlFor="title">Title:</label>
-          <input
+          <TextField
             placeholder="Blog Title"
-            type="text"
-            name="title"
+            label="Title"
             id="title"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
         <div>
-          <label htmlFor="author">Author:</label>
-          <input
+          <TextField
             placeholder="Blog Author"
-            type="text"
-            name="author"
+            label="Author"
             id="author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
-          <label htmlFor="url">URL:</label>
-          <input
+          <TextField
             placeholder="Blog URL"
             type="url"
-            name="url"
+            label="URL"
             id="url"
             value={url}
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
         <div>
-          <label htmlFor="likes">Likes</label>
-          <input
+          <TextField
             placeholder="Blog Likes"
             type="number"
-            name="likes"
+            label="Likes"
             id="likes"
             value={likes}
             onChange={({ target }) => setLikes(target.value)}
           />
         </div>
-        <button className="newBlogSubmit" type="submit">
+        <Button style={{marginBottom: 15, width: 100}} className="newBlogSubmit" type="submit" variant="contained" color="secondary" startIcon={<Save />}>
           Create Blog
-        </button>
+        </Button>
       </form>
     </div>
   );

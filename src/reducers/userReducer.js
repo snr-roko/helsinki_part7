@@ -29,9 +29,27 @@ export const setLoggedInUser = () => {
 
 export const loginUser = (userCredentials) => {
     return async dispatch => {
-        const user = await loginService(userCredentials)
-        dispatch(setUser({type: 'SET_USER', user}))
-        window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+        try {
+            const user = await loginService(userCredentials)
+            dispatch(setUser({type: 'SET_USER', user}))
+            window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+        } catch (error) {
+            dispatch({
+              type: 'notifications/createNotification',
+              payload: {
+                display: error.error,
+                type: 'ERROR'
+              }
+            });
+            setTimeout(() => {
+              dispatch({
+                type: 'notifications/createNotification',
+                payload: {
+                  type: 'RESET'
+                }
+              })
+            }, 5000);
+          }
     }
 }
 

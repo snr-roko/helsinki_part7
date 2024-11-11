@@ -1,3 +1,5 @@
+import { List } from "@mui/material"
+import { Link } from "react-router-dom"
 const User = ({user}) => {
     if(!user) return null
     return (
@@ -5,9 +7,9 @@ const User = ({user}) => {
             <h3>{user.name}</h3>
             <h4>Added Blogs</h4>
             {user.blogs.map(blog => (
-                <li key={blog.id}>
-                    {blog.title}
-                </li>
+                <List key={blog.id}>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </List>
             ))}
         </div>
     )
